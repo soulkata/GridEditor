@@ -16,10 +16,10 @@ namespace Assets
         public bool reloadMeshes;
 
         public int xAmmount = 100;
-        public int zAmmount = 100;
+        public int yAmmount = 100;
         public GridMaterialBehavior[,] floors;
-        public GridMaterialBehavior[,] zWalls;
-        public GridMaterialBehavior[,] xWalls;
+        public GridMaterialBehavior[,] verticalWalls;
+        public GridMaterialBehavior[,] horizontalWalls;
         public GridChunkBehaviour chunkPrefab;
         public GridMaterialBehavior roofMaterial;
 
@@ -79,14 +79,14 @@ namespace Assets
             }
 
             int xChunkCount = (int)Mathf.Ceil((float)this.xAmmount / (float)this.chunkSize);
-            int zChunkCount = (int)Mathf.Ceil((float)this.zAmmount / (float)this.chunkSize);
+            int yChunkCount = (int)Mathf.Ceil((float)this.yAmmount / (float)this.chunkSize);
 
             for (int x = 0; x < xChunkCount; x++)
             {
                 int minX = x * this.chunkSize;
                 int maxX = Mathf.Min(this.xAmmount - 1, minX + this.chunkSize - 1);
 
-                for (int z = 0; z < zChunkCount; z++)
+                for (int y = 0; y < yChunkCount; y++)
                 {
                     if (currentChunks.Count > 0)
                     {
@@ -94,9 +94,9 @@ namespace Assets
                         currentChunks.RemoveAt(currentChunks.Count - 1);
                         chunk.minX = minX;
                         chunk.maxX = maxX;
-                        chunk.minZ = z * this.chunkSize;
-                        chunk.maxZ = Mathf.Min(this.zAmmount - 1, chunk.minZ + this.chunkSize - 1);
-                        chunk.transform.localPosition = new Vector3(minX * this.cellSize, 0, chunk.minZ * this.cellSize);
+                        chunk.minY = y * this.chunkSize;
+                        chunk.maxY = Mathf.Min(this.yAmmount - 1, chunk.minY + this.chunkSize - 1);
+                        chunk.transform.localPosition = new Vector3(minX * this.cellSize, 0, chunk.minY * this.cellSize);
                         chunk.ReloadMesh();
                     }
                     else
@@ -105,9 +105,9 @@ namespace Assets
                         chunk.transform.SetParent(build.transform);
                         chunk.minX = minX;
                         chunk.maxX = maxX;
-                        chunk.minZ = z * this.chunkSize;
-                        chunk.maxZ = Mathf.Min(this.zAmmount - 1, chunk.minZ + this.chunkSize - 1);
-                        chunk.transform.localPosition = new Vector3(minX * this.cellSize, 0, chunk.minZ * this.cellSize);
+                        chunk.minY = y * this.chunkSize;
+                        chunk.maxY = Mathf.Min(this.yAmmount - 1, chunk.minY + this.chunkSize - 1);
+                        chunk.transform.localPosition = new Vector3(minX * this.cellSize, 0, chunk.minY * this.cellSize);
                     }
                 }
             }
@@ -118,20 +118,23 @@ namespace Assets
 
         private void LoadGridArrays()
         {
-            this.floors = new GridMaterialBehavior[this.xAmmount, this.zAmmount];
-            this.xWalls = new GridMaterialBehavior[this.xAmmount, this.zAmmount + 1];
-            this.zWalls = new GridMaterialBehavior[this.xAmmount + 1, this.zAmmount];
+            this.floors = new GridMaterialBehavior[this.xAmmount, this.yAmmount];
+            this.horizontalWalls = new GridMaterialBehavior[this.xAmmount, this.yAmmount + 1];
+            this.verticalWalls = new GridMaterialBehavior[this.xAmmount + 1, this.yAmmount];
 
             int childCount = this.transform.childCount;
             for (int i = 0; i < childCount; i++)
             {
                 Transform t = this.transform.GetChild(i);
 
+                if (!t.gameObject.activeInHierarchy)
+                    continue;
+
                 GridFloorBehaviour floor = t.GetComponent<GridFloorBehaviour>();
                 if (floor != null)
                 {
                     int xEnd = floor.xStart + floor.xCount - 1;
-                    int zEnd = floor.zStart + floor.zCount - 1;
+                    int yEnd = floor.yStart + floor.yCount - 1;
 
                     for (int x = floor.xStart; x <= xEnd; x++)
                     {
@@ -141,15 +144,15 @@ namespace Assets
                         if (x >= this.xAmmount)
                             break;
 
-                        for (int z = floor.zStart; z <= zEnd; z++)
+                        for (int y = floor.yStart; y <= yEnd; y++)
                         {
-                            if (z < 0)
+                            if (y < 0)
                                 continue;
 
-                            if (z >= this.zAmmount)
+                            if (y >= this.yAmmount)
                                 break;
 
-                            this.floors[x, z] = floor.floorMaterial;
+                            this.floors[x, y] = floor.floorMaterial;
                         }
                     }
                 }
@@ -158,7 +161,7 @@ namespace Assets
                 if (room != null)
                 {
                     int xEnd = room.xStart + room.xCount - 1;
-                    int zEnd = room.zStart + room.zCount - 1;
+                    int yEnd = room.yStart + room.yCount - 1;
 
                     for (int x = room.xStart; x <= xEnd; x++)
                     {
@@ -168,40 +171,40 @@ namespace Assets
                         if (x >= this.xAmmount)
                             break;
 
-                        if ((room.zStart >= 0) &&
-                            (room.zStart < this.zAmmount))
-                            this.xWalls[x, room.zStart] = room.floorMaterial;
+                        if ((room.yStart >= 0) &&
+                            (room.yStart < this.yAmmount))
+                            this.horizontalWalls[x, room.yStart] = room.floorMaterial;
 
-                        if ((zEnd + 1 >= 0) &&
-                            (zEnd + 1 <= this.zAmmount))
-                            this.xWalls[x, zEnd + 1] = room.floorMaterial;
+                        if ((yEnd + 1 >= 0) &&
+                            (yEnd < this.yAmmount))
+                            this.horizontalWalls[x, yEnd + 1] = room.floorMaterial;
                     }
 
-                    for (int z = room.zStart; z <= zEnd; z++)
+                    for (int y = room.yStart; y <= yEnd; y++)
                     {
-                        if (z < 0)
+                        if (y < 0)
                             continue;
 
-                        if (z >= this.zAmmount)
+                        if (y >= this.yAmmount)
                             break;
 
                         if ((room.xStart >= 0) &&
-                            (room.xStart < this.zAmmount))
-                            this.zWalls[room.xStart, z] = room.floorMaterial;
+                            (room.xStart < this.yAmmount))
+                            this.verticalWalls[room.xStart, y] = room.floorMaterial;
 
                         if ((xEnd + 1 >= 0) &&
-                            (xEnd + 1 <= this.zAmmount))
-                            this.zWalls[xEnd + 1, z] = room.floorMaterial;
+                            (xEnd < this.yAmmount))
+                            this.verticalWalls[xEnd + 1, y] = room.floorMaterial;
                     }
                 }
             }
         }
   
-        public GridMaterialBehavior Floor(int x, int z) { return this.floors[x, z]; }
+        public GridMaterialBehavior Floor(int x, int y) { return this.floors[x, y]; }
 
-        public GridMaterialBehavior LeftWall(int x, int z)
+        public GridMaterialBehavior LeftWall(int x, int y)
         {
-            if (this.floors[x, z] == null)
+            if (this.floors[x, y] == null)
             {
                 if (x == 0)
                     return this.roofMaterial;
@@ -210,19 +213,19 @@ namespace Assets
             }
             else
             {
-                GridMaterialBehavior ret = this.zWalls[x, z];
+                GridMaterialBehavior ret = this.verticalWalls[x, y];
                 if ((ret == null) &&
                     (x > 0) &&
-                    (this.floors[x - 1, z] == null))
-                    ret = this.floors[x, z];
+                    (this.floors[x - 1, y] == null))
+                    ret = this.floors[x, y];
 
                 return ret;
             }
         }
 
-        public GridMaterialBehavior RightWall(int x, int z)
+        public GridMaterialBehavior RightWall(int x, int y)
         {
-            if (this.floors[x, z] == null)
+            if (this.floors[x, y] == null)
             {
                 if (x == this.xAmmount - 1)
                     return this.roofMaterial;
@@ -231,53 +234,53 @@ namespace Assets
             }
             else
             {
-                GridMaterialBehavior ret = this.zWalls[x + 1, z];
+                GridMaterialBehavior ret = this.verticalWalls[x + 1, y];
                 if ((ret == null) &&
                     (x + 1 < this.xAmmount) &&
-                    (this.floors[x + 1, z] == null))
-                    ret = this.floors[x, z];
+                    (this.floors[x + 1, y] == null))
+                    ret = this.floors[x, y];
 
                 return ret;
             }
         }
 
-        public GridMaterialBehavior BackWall(int x, int z)
+        public GridMaterialBehavior BottomWall(int x, int y)
         {
-            if (this.floors[x, z] == null)
+            if (this.floors[x, y] == null)
             {
-                if (z == 0)
+                if (y == 0)
                     return this.roofMaterial;
                 else
                     return null;
             }
             else
             {
-                GridMaterialBehavior ret = this.xWalls[x, z];
+                GridMaterialBehavior ret = this.horizontalWalls[x, y];
                 if ((ret == null) &&
-                    (z > 0) &&
-                    (this.floors[x, z - 1] == null))
-                    ret = this.floors[x, z];
+                    (y > 0) &&
+                    (this.floors[x, y - 1] == null))
+                    ret = this.floors[x, y];
 
                 return ret;
             }
         }
 
-        public GridMaterialBehavior ForwardWall(int x, int z)
+        public GridMaterialBehavior UpperWall(int x, int y)
         {
-            if (this.floors[x, z] == null)
+            if (this.floors[x, y] == null)
             {
-                if (z == this.zAmmount - 1)
+                if (y == this.yAmmount - 1)
                     return this.roofMaterial;
                 else
                     return null;
             }
             else
             {
-                GridMaterialBehavior ret = this.xWalls[x, z + 1];
+                GridMaterialBehavior ret = this.horizontalWalls[x, y + 1];
                 if ((ret == null) &&
-                    (z + 1 < this.zAmmount) &&
-                    (this.floors[x, z + 1] == null))
-                    ret = this.floors[x, z];
+                    (y + 1 < this.yAmmount) &&
+                    (this.floors[x, y + 1] == null))
+                    ret = this.floors[x, y];
 
                 return ret;
             }

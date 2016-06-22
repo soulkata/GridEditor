@@ -6,9 +6,9 @@ namespace Assets
     {
         public GridMaterialBehavior floorMaterial;
         public int xStart;
-        public int zStart;
+        public int yStart;
         public int xCount;
-        public int zCount;
+        public int yCount;
 
         void OnValidate()
         {

@@ -6,7 +6,7 @@ namespace Assets
     {
         public Material floorMaterial;
         public float floorTileXSize;
-        public float floorTileZSize;
+        public float floorTileYSize;
 
         public Material wallMaterial;
         public float wallSize;
