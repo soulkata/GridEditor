@@ -154,14 +154,45 @@ namespace Assets
                     }
                 }
 
-                GridMaterialBehavior mat = t.GetComponent<GridMaterialBehavior>();
-                if (mat != null)
+                GridRoomBehaviour room = t.GetComponent<GridRoomBehaviour>();
+                if (room != null)
                 {
-                    if (mat.floorTileXSize <= 0)
-                        return;
+                    int xEnd = room.xStart + room.xCount - 1;
+                    int zEnd = room.zStart + room.zCount - 1;
 
-                    if (mat.floorTileZSize <= 0)
-                        return;
+                    for (int x = room.xStart; x <= xEnd; x++)
+                    {
+                        if (x < 0)
+                            continue;
+
+                        if (x >= this.xAmmount)
+                            break;
+
+                        if ((room.zStart >= 0) &&
+                            (room.zStart < this.zAmmount))
+                            this.xWalls[x, room.zStart] = room.floorMaterial;
+
+                        if ((zEnd + 1 >= 0) &&
+                            (zEnd + 1 <= this.zAmmount))
+                            this.xWalls[x, zEnd + 1] = room.floorMaterial;
+                    }
+
+                    for (int z = room.zStart; z <= zEnd; z++)
+                    {
+                        if (z < 0)
+                            continue;
+
+                        if (z >= this.zAmmount)
+                            break;
+
+                        if ((room.xStart >= 0) &&
+                            (room.xStart < this.zAmmount))
+                            this.zWalls[room.xStart, z] = room.floorMaterial;
+
+                        if ((xEnd + 1 >= 0) &&
+                            (xEnd + 1 <= this.zAmmount))
+                            this.zWalls[xEnd + 1, z] = room.floorMaterial;
+                    }
                 }
             }
         }
@@ -249,123 +280,6 @@ namespace Assets
                     ret = this.floors[x, z];
 
                 return ret;
-            }
-        }
-
-        public void CellData(int x, int z, out GridMaterialBehavior floorMaterial, out GridMaterialBehavior leftWall, out GridMaterialBehavior rightWall, out GridMaterialBehavior backWall, out GridMaterialBehavior forwardWall, out GridMaterialBehavior leftIniWall, out GridMaterialBehavior leftEndWall, out GridMaterialBehavior rightIniWall, out GridMaterialBehavior rightEndWall, out GridMaterialBehavior backIniWall, out GridMaterialBehavior backEndWall, out GridMaterialBehavior forwardIniWall, out GridMaterialBehavior forwardEndWall)
-        {
-            if (this.floors == null)
-                this.LoadGridArrays();
-
-            floorMaterial = this.floors[x, z];
-            leftIniWall = null;
-            leftEndWall = null;
-            rightIniWall = null;
-            rightEndWall = null;
-            backIniWall = null;
-            backEndWall = null;
-            forwardIniWall = null;
-            forwardEndWall = null;
-
-            if (floorMaterial == null)
-            {
-                if (x == 0)
-                    leftWall = this.roofMaterial;
-                else
-                    leftWall = null;
-
-                if (x == this.xAmmount - 1)
-                    rightWall = this.roofMaterial;
-                else
-                    rightWall = null;
-
-                if (z == 0)
-                    backWall = this.roofMaterial;
-                else
-                    backWall = null;
-
-                if (z == this.zAmmount - 1)
-                    forwardWall = this.roofMaterial;
-                else
-                    forwardWall = null;                
-            }
-            else
-            {
-                leftWall = this.zWalls[x, z];
-                if ((leftWall == null) &&
-                    (x > 0) &&
-                    (this.floors[x - 1, z] == null))
-                    leftWall = this.floors[x, z];
-
-                if (leftWall == null)
-                {
-                    if ((x > 0) &&
-                        (x < this.xAmmount - 1))
-                    {
-                        if (z > 0)
-                            leftIniWall = this.LeftWall(x, z - 1);
-
-                        if (z < this.zAmmount - 1)
-                            leftEndWall = this.LeftWall(x, z + 1);
-                    }
-                }
-
-                rightWall = this.zWalls[x + 1, z];
-                if ((rightWall == null) &&
-                    (x + 1 < this.xAmmount) && 
-                    (this.floors[x + 1, z] == null))
-                    rightWall = this.floors[x, z];
-
-                if (rightWall == null)
-                {
-                    if ((x > 0) &&
-                        (x < this.xAmmount - 1))
-                    {
-                        if (z > 0)
-                            rightIniWall = this.RightWall(x, z - 1);
-
-                        if (z < this.zAmmount - 1)
-                            rightEndWall = this.RightWall(x, z + 1);
-                    }
-                }
-
-                backWall = this.xWalls[x, z];
-                if ((backWall == null) &&
-                    (z > 0) &&
-                    (this.floors[x, z - 1] == null))
-                    backWall = this.floors[x, z];
-
-                if (backWall == null)
-                {
-                    if ((z > 0) &&
-                        (z < this.zAmmount - 1))
-                    {
-                        if (x > 0)
-                            backIniWall = this.BackWall(x - 1, z);
-
-                        if (x < this.xAmmount - 1)
-                            backEndWall = this.BackWall(x + 1, z);
-                    }
-                }
-
-                forwardWall = this.xWalls[x, z + 1];
-                if ((forwardWall == null) &&
-                    (z + 1 < this.zAmmount) &&
-                    (this.floors[x, z + 1] == null))
-                    forwardWall = this.floors[x, z];
-
-                if (forwardWall == null)
-                {
-                    if ((z > 0) &&
-                        (z < this.zAmmount - 1))
-                    {
-                        if (x > 0)
-                            forwardIniWall = this.ForwardWall(x - 1, z);
-
-                        if (x < this.xAmmount - 1)
-                            forwardEndWall = this.ForwardWall(x + 1, z);
-                    }
-                }                
             }
         }
     }

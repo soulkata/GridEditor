@@ -192,7 +192,6 @@ namespace Assets
                         GridMaterialBehavior rightWall = this.gridMap.RightWall(x, z);
                         GridMaterialBehavior backWall = this.gridMap.BackWall(x, z);
                         GridMaterialBehavior forwardWall = this.gridMap.ForwardWall(x, z);
-                        GridMaterialBehavior aux;
 
                         float xVertIni;
                         float xVertEnd;
@@ -257,20 +256,30 @@ namespace Assets
                                 this.WriteRoof(xVertIni, xVertEnd, zVertEnd, (z + 1) * this.gridMap.cellSize);
                             }
 
+                            GridMaterialBehavior leftIniWall = null;
+                            GridMaterialBehavior leftEndWall = null;
+                            GridMaterialBehavior rightIniWall = null;
+                            GridMaterialBehavior rightEndWall = null;
+                            GridMaterialBehavior backIniWall = null;
+                            GridMaterialBehavior backEndWall = null;
+                            GridMaterialBehavior forwardIniWall = null;
+                            GridMaterialBehavior forwardEndWall = null;
+
                             if (leftWall == null)
                             {
                                 if (z > 0)
                                 {
-                                    aux = this.gridMap.LeftWall(x, z - 1);
-                                    if (aux != null)
+                                    leftIniWall = this.gridMap.LeftWall(x, z - 1);
+                                    if (leftIniWall != null)
                                     {
                                         if ((x > 0) &&
                                             (x < this.gridMap.xAmmount - 1))
                                         {
-                                            this.WriteLeftWall(aux,
+                                            this.WriteLeftWall(leftIniWall,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 z * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
+
                                             this.WriteRoof(x * this.gridMap.cellSize,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 z * this.gridMap.cellSize,
@@ -278,7 +287,7 @@ namespace Assets
                                         }
                                         else
                                         {
-                                            this.WriteRightWall(aux,
+                                            this.WriteRightWall(leftIniWall,
                                                 x * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
@@ -288,13 +297,13 @@ namespace Assets
 
                                 if (z < this.gridMap.zAmmount - 1)
                                 {
-                                    aux = this.gridMap.LeftWall(x, z + 1);
-                                    if (aux != null)
+                                    leftEndWall = this.gridMap.LeftWall(x, z + 1);
+                                    if (leftEndWall != null)
                                     {
                                         if ((x > 0) &&
                                             (x < this.gridMap.xAmmount - 1))
                                         {
-                                            this.WriteLeftWall(aux,
+                                            this.WriteLeftWall(leftEndWall,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize);
@@ -306,7 +315,7 @@ namespace Assets
                                         }
                                         else
                                         {
-                                            this.WriteRightWall(aux,
+                                            this.WriteRightWall(leftEndWall,
                                                 x * this.gridMap.cellSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize);
@@ -315,21 +324,21 @@ namespace Assets
                                 }
                             }
                             else
-                                this.WriteLeftWall(leftWall, xVertIni, zVertIni, zVertEnd);                            
+                                this.WriteLeftWall(leftWall, xVertIni, zVertIni, zVertEnd);
 
                             if (rightWall == null)
                             {
                                 
                                 if (z > 0)
                                 {
-                                    aux = this.gridMap.RightWall(x, z - 1);
+                                    rightIniWall = this.gridMap.RightWall(x, z - 1);
 
-                                    if (aux != null)
+                                    if (rightIniWall != null)
                                     {
                                         if ((x > 0) &&
                                             (x < this.gridMap.xAmmount - 1))
                                         {
-                                            this.WriteRightWall(aux,
+                                            this.WriteRightWall(rightIniWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 z * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
@@ -341,7 +350,7 @@ namespace Assets
                                         }
                                         else
                                         {
-                                            this.WriteLeftWall(aux,
+                                            this.WriteLeftWall(rightIniWall,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
@@ -351,14 +360,14 @@ namespace Assets
 
                                 if (z < this.gridMap.zAmmount - 1)
                                 {
-                                    aux = this.gridMap.RightWall(x, z + 1);
+                                    rightEndWall = this.gridMap.RightWall(x, z + 1);
 
-                                    if (aux != null)
+                                    if (rightEndWall != null)
                                     {
                                         if ((x > 0) &&
                                             (x < this.gridMap.xAmmount - 1))
                                         {
-                                            this.WriteRightWall(aux,
+                                            this.WriteRightWall(rightEndWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize);
@@ -370,7 +379,7 @@ namespace Assets
                                         }
                                         else
                                         {
-                                            this.WriteLeftWall(aux,
+                                            this.WriteLeftWall(rightEndWall,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize);
@@ -385,21 +394,27 @@ namespace Assets
                             {
                                 if (x > 0)
                                 {
-                                    aux = this.gridMap.BackWall(x - 1, z);
+                                    backIniWall = this.gridMap.BackWall(x - 1, z);
 
-                                    if (aux != null)
+                                    if (backIniWall != null)
                                     {
                                         if ((z > 0) &&
                                             (z < this.gridMap.zAmmount - 1))
                                         {
-                                            this.WriteBackWall(aux,
+                                            this.WriteBackWall(backIniWall,
                                                 x * this.gridMap.cellSize,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
+
+                                            if (leftIniWall == null)
+                                                this.WriteRoof(x * this.gridMap.cellSize,
+                                                    x * this.gridMap.cellSize + this.gridMap.wallSize,
+                                                    z * this.gridMap.cellSize,
+                                                    z * this.gridMap.cellSize + this.gridMap.wallSize);
                                         }
                                         else
                                         {
-                                            this.WriteForwardWall(aux,
+                                            this.WriteForwardWall(backIniWall,
                                                 x * this.gridMap.cellSize,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 z * this.gridMap.cellSize);
@@ -409,21 +424,27 @@ namespace Assets
 
                                 if (x < this.gridMap.xAmmount - 1)
                                 {
-                                    aux = this.gridMap.BackWall(x + 1, z);
+                                    backEndWall = this.gridMap.BackWall(x + 1, z);
 
-                                    if (aux != null)
+                                    if (backEndWall != null)
                                     {
                                         if ((z > 0) &&
                                             (z < this.gridMap.zAmmount - 1))
                                         {
-                                            this.WriteBackWall(aux,
+                                            this.WriteBackWall(backEndWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize + this.gridMap.wallSize);
+
+                                            if (rightIniWall == null)
+                                                this.WriteRoof((x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
+                                                    (x + 1) * this.gridMap.cellSize,
+                                                    z * this.gridMap.cellSize,
+                                                    z * this.gridMap.cellSize + this.gridMap.wallSize);
                                         }
                                         else
                                         {
-                                            this.WriteForwardWall(aux,
+                                            this.WriteForwardWall(backEndWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 z * this.gridMap.cellSize);
@@ -438,21 +459,27 @@ namespace Assets
                             {
                                 if (x > 0)
                                 {
-                                    aux = this.gridMap.ForwardWall(x - 1, z);
+                                    forwardIniWall = this.gridMap.ForwardWall(x - 1, z);
 
-                                    if (aux != null)
+                                    if (forwardIniWall != null)
                                     {
                                         if ((z > 0) &&
                                             (z < this.gridMap.zAmmount - 1))
                                         {
-                                            this.WriteForwardWall(aux,
+                                            this.WriteForwardWall(forwardIniWall,
                                                 x * this.gridMap.cellSize,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize);
+
+                                            if (leftEndWall == null)
+                                                this.WriteRoof(x * this.gridMap.cellSize,
+                                                    x * this.gridMap.cellSize + this.gridMap.wallSize,
+                                                    (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
+                                                    (z + 1) * this.gridMap.cellSize);
                                         }
                                         else
                                         {
-                                            this.WriteBackWall(aux,
+                                            this.WriteBackWall(forwardIniWall,
                                                 x * this.gridMap.cellSize,
                                                 x * this.gridMap.cellSize + this.gridMap.wallSize,
                                                 (z + 1) * this.gridMap.cellSize);
@@ -462,21 +489,27 @@ namespace Assets
 
                                 if (x < this.gridMap.xAmmount - 1)
                                 {
-                                    aux = this.gridMap.ForwardWall(x + 1, z);
+                                    forwardEndWall = this.gridMap.ForwardWall(x + 1, z);
 
-                                    if (aux != null)
+                                    if (forwardEndWall != null)
                                     {
                                         if ((z > 0) &&
                                             (z < this.gridMap.zAmmount - 1))
                                         {
-                                            this.WriteForwardWall(aux,
+                                            this.WriteForwardWall(forwardEndWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize);
+
+                                            if (rightEndWall == null)
+                                                this.WriteRoof((x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
+                                                    (x + 1) * this.gridMap.cellSize,
+                                                    (z + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
+                                                    (z + 1) * this.gridMap.cellSize);
                                         }
                                         else
                                         {
-                                            this.WriteBackWall(aux,
+                                            this.WriteBackWall(forwardEndWall,
                                                 (x + 1) * this.gridMap.cellSize - this.gridMap.wallSize,
                                                 (x + 1) * this.gridMap.cellSize,
                                                 (z + 1) * this.gridMap.cellSize);
