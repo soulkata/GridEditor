@@ -172,11 +172,11 @@ namespace Assets
                             break;
 
                         if ((room.yStart >= 0) &&
-                            (room.yStart < this.yAmmount))
+                            (room.yStart <= this.yAmmount))
                             this.horizontalWalls[x, room.yStart] = room.floorMaterial;
 
                         if ((yEnd + 1 >= 0) &&
-                            (yEnd < this.yAmmount))
+                            (yEnd + 1 <= this.yAmmount))
                             this.horizontalWalls[x, yEnd + 1] = room.floorMaterial;
                     }
 
@@ -189,11 +189,11 @@ namespace Assets
                             break;
 
                         if ((room.xStart >= 0) &&
-                            (room.xStart < this.yAmmount))
+                            (room.xStart <= this.yAmmount))
                             this.verticalWalls[room.xStart, y] = room.floorMaterial;
 
                         if ((xEnd + 1 >= 0) &&
-                            (xEnd < this.yAmmount))
+                            (xEnd + 1 <= this.xAmmount))
                             this.verticalWalls[xEnd + 1, y] = room.floorMaterial;
                     }
                 }
@@ -205,12 +205,7 @@ namespace Assets
         public GridMaterialBehavior LeftWall(int x, int y)
         {
             if (this.floors[x, y] == null)
-            {
-                if (x == 0)
-                    return this.roofMaterial;
-                else
-                    return null;
-            }
+                return null;
             else
             {
                 GridMaterialBehavior ret = this.verticalWalls[x, y];
@@ -226,12 +221,7 @@ namespace Assets
         public GridMaterialBehavior RightWall(int x, int y)
         {
             if (this.floors[x, y] == null)
-            {
-                if (x == this.xAmmount - 1)
-                    return this.roofMaterial;
-                else
-                    return null;
-            }
+                return null;
             else
             {
                 GridMaterialBehavior ret = this.verticalWalls[x + 1, y];
@@ -247,12 +237,7 @@ namespace Assets
         public GridMaterialBehavior BottomWall(int x, int y)
         {
             if (this.floors[x, y] == null)
-            {
-                if (y == 0)
-                    return this.roofMaterial;
-                else
-                    return null;
-            }
+                return null;
             else
             {
                 GridMaterialBehavior ret = this.horizontalWalls[x, y];
@@ -268,12 +253,7 @@ namespace Assets
         public GridMaterialBehavior UpperWall(int x, int y)
         {
             if (this.floors[x, y] == null)
-            {
-                if (y == this.yAmmount - 1)
-                    return this.roofMaterial;
-                else
-                    return null;
-            }
+                return null;
             else
             {
                 GridMaterialBehavior ret = this.horizontalWalls[x, y + 1];

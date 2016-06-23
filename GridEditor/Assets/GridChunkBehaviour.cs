@@ -71,352 +71,525 @@ namespace Assets
                     for (int y = this.owner.minY; y <= this.owner.maxY; y++)
                     {
                         GridMaterialBehavior floor = this.gridMap.Floor(x, y);
-                        GridMaterialBehavior leftWall = this.gridMap.LeftWall(x, y);
-                        GridMaterialBehavior rightWall = this.gridMap.RightWall(x, y);
-                        GridMaterialBehavior bottomWall = this.gridMap.BottomWall(x, y);
-                        GridMaterialBehavior upperWall = this.gridMap.UpperWall(x, y);
 
-                        float xFloorIni;
-                        float xFloorEnd;
-                        float yFloorIni;
-                        float yFloorEnd;
+                        float xCellIni = x * this.gridMap.cellSize;
+                        float xCellEnd = (x + 1) * this.gridMap.cellSize;
+                        float yCellIni = y * this.gridMap.cellSize;
+                        float yCellEnd = (y + 1) * this.gridMap.cellSize;
 
                         if (floor == null)
                         {
-                            xFloorIni = x * this.gridMap.cellSize;
-                            xFloorEnd = (x + 1) * this.gridMap.cellSize;
-                            yFloorIni = y * this.gridMap.cellSize;
-                            yFloorEnd = (y + 1) * this.gridMap.cellSize;
+                            this.WriteRoof(xCellIni,
+                                xCellEnd,
+                                yCellIni,
+                                yCellEnd);
 
-                            this.WriteRoof(xFloorIni,
-                                xFloorEnd,
-                                yFloorIni,
-                                yFloorEnd);
+                            if (x == 0)
+                                this.WriteRightWall(this.gridMap.roofMaterial, xCellIni, yCellIni, yCellEnd);
 
-                            if (leftWall != null)
-                                this.WriteRightWall(leftWall, xFloorIni, yFloorIni, yFloorEnd);
+                            if (x == this.gridMap.xAmmount - 1)
+                                this.WriteLeftWall(this.gridMap.roofMaterial, xCellEnd, yCellIni, yCellEnd);
 
-                            if (rightWall != null)
-                                this.WriteLeftWall(rightWall, xFloorEnd, yFloorIni, yFloorEnd);
+                            if (y == 0)
+                                this.WriteUpperWall(this.gridMap.roofMaterial, xCellIni, xCellEnd, yCellIni);
 
-                            if (bottomWall != null)
-                                this.WriteForwardWall(bottomWall, xFloorIni, xFloorEnd, yFloorIni);
-
-                            if (upperWall != null)
-                                this.WriteBackWall(upperWall, xFloorIni, xFloorEnd, yFloorEnd);
+                            if (y == this.gridMap.yAmmount - 1)
+                                this.WriteBottomWall(this.gridMap.roofMaterial, xCellIni, xCellEnd, yCellEnd);
                         }
                         else
                         {
-                            float xCellIni = x * this.gridMap.cellSize;
+                            float xFloorIni;
+                            float xFloorEnd;
+                            float yFloorIni;
+                            float yFloorEnd;
                             float xWallIni = xCellIni + this.gridMap.wallSize;
-                            float xCellEnd = (x + 1) * this.gridMap.cellSize;
                             float xWallEnd = xCellEnd - this.gridMap.wallSize;
-                            float yCellIni = y * this.gridMap.cellSize;
                             float yWallIni = yCellIni + this.gridMap.wallSize;
-                            float yCellEnd = (y + 1) * this.gridMap.cellSize;
                             float yWallEnd = yCellEnd - this.gridMap.wallSize;
+                            GridMaterialBehavior leftWall = this.gridMap.LeftWall(x, y);
+                            GridMaterialBehavior rightWall = this.gridMap.RightWall(x, y);
+                            GridMaterialBehavior bottomWall = this.gridMap.BottomWall(x, y);
+                            GridMaterialBehavior upperWall = this.gridMap.UpperWall(x, y);
+                            GridMaterialBehavior leftIniWall;
+                            GridMaterialBehavior leftEndWall;
+                            GridMaterialBehavior rightIniWall;
+                            GridMaterialBehavior rightEndWall;
+                            GridMaterialBehavior bottomIniWall;
+                            GridMaterialBehavior bottomEndWall;
+                            GridMaterialBehavior upperIniWall;
+                            GridMaterialBehavior upperEndWall;
 
                             if (leftWall == null)
+                            {
                                 xFloorIni = xCellIni;
+
+                                if (y == 0)
+                                    leftIniWall = null;
+                                else
+                                    leftIniWall = this.gridMap.LeftWall(x, y - 1);
+
+                                if (y == this.gridMap.yAmmount - 1)
+                                    leftEndWall = null;
+                                else
+                                    leftEndWall = this.gridMap.LeftWall(x, y + 1);
+                            }
                             else
                             {
                                 xFloorIni = xWallIni;
+                                leftIniWall = null;
+                                leftEndWall = null;
+
                                 this.WriteRoof(xCellIni, xFloorIni, yCellIni, yCellEnd);
+
+                                this.WriteLeftWall(leftWall, xWallIni, yCellIni, yCellEnd);
+                                if (x == 0)
+                                    this.WriteRightWall(gridMap.roofMaterial, xCellIni, yCellIni, yCellEnd);
+                                if ((y == 0) &&
+                                    (bottomWall == null))
+                                    this.WriteUpperWall(this.gridMap.roofMaterial, xCellIni, xWallIni, yCellIni);
+                                if ((y == this.gridMap.yAmmount - 1) &&
+                                    (upperWall == null))
+                                    this.WriteBottomWall(this.gridMap.roofMaterial, xCellIni, xWallIni, yCellEnd);
                             }
 
                             if (rightWall == null)
+                            {
                                 xFloorEnd = xCellEnd;
+
+                                if (y == 0)
+                                    rightIniWall = null;
+                                else
+                                    rightIniWall = this.gridMap.RightWall(x, y - 1);
+
+                                if (y == this.gridMap.yAmmount - 1)
+                                    rightEndWall = null;
+                                else
+                                    rightEndWall = this.gridMap.RightWall(x, y + 1);
+                            }
                             else
                             {
                                 xFloorEnd = xWallEnd;
-                                this.WriteRoof(xFloorEnd, xCellEnd, yCellIni, yCellEnd);
+                                rightIniWall = null;
+                                rightEndWall = null;
+
+                                this.WriteRoof(xWallEnd, xCellEnd, yCellIni, yCellEnd);
+
+                                this.WriteRightWall(rightWall, xWallEnd, yCellIni, yCellEnd);
+                                if (x == this.gridMap.xAmmount - 1)
+                                    this.WriteLeftWall(gridMap.roofMaterial, xCellEnd, yCellIni, yCellEnd);
+                                if ((y == 0) &&
+                                    (bottomWall == null))
+                                    this.WriteUpperWall(this.gridMap.roofMaterial, xWallEnd, xCellEnd, yCellIni);
+                                if ((y == this.gridMap.yAmmount - 1) &&
+                                    (upperWall == null))
+                                    this.WriteBottomWall(this.gridMap.roofMaterial, xWallEnd, xCellEnd, yCellEnd);
                             }
 
                             if (bottomWall == null)
+                            {
                                 yFloorIni = yCellIni;
+
+                                if (x == 0)
+                                    bottomIniWall = null;
+                                else
+                                    bottomIniWall = this.gridMap.BottomWall(x - 1, y);
+
+                                if (x == this.gridMap.xAmmount - 1)
+                                    bottomEndWall = null;
+                                else
+                                    bottomEndWall = this.gridMap.BottomWall(x + 1, y);
+                            }
                             else
                             {
                                 yFloorIni = yWallIni;
-                                this.WriteRoof(xFloorIni, xFloorEnd, yCellIni, yFloorIni);
+                                bottomIniWall = null;
+                                bottomEndWall = null;
+
+                                this.WriteRoof(xFloorIni, xFloorEnd, yCellIni, yWallIni);
+
+                                this.WriteBottomWall(bottomWall, xFloorIni, xFloorEnd, yWallIni);
+                                if (y == 0)
+                                    this.WriteUpperWall(gridMap.roofMaterial, xCellIni, xCellEnd, yCellIni);
+                                if ((x == 0) &&
+                                    (leftWall == null))
+                                    this.WriteRightWall(this.gridMap.roofMaterial, xCellIni, yCellIni, yWallIni);
+                                if ((x == this.gridMap.xAmmount - 1) &&
+                                    (rightWall == null))
+                                    this.WriteLeftWall(this.gridMap.roofMaterial, xCellEnd, yCellIni, yWallIni);
                             }
 
                             if (upperWall == null)
+                            {
                                 yFloorEnd = yCellEnd;
+
+                                if (x == 0)
+                                    upperIniWall = null;
+                                else
+                                    upperIniWall = this.gridMap.UpperWall(x - 1, y);
+
+                                if (x == this.gridMap.xAmmount - 1)
+                                    upperEndWall = null;
+                                else
+                                    upperEndWall = this.gridMap.UpperWall(x + 1, y);
+                            }
                             else
                             {
                                 yFloorEnd = yWallEnd;
-                                this.WriteRoof(xFloorIni, xFloorEnd, yFloorEnd, yCellEnd);
+                                upperIniWall = null;
+                                upperEndWall = null;
+
+                                this.WriteRoof(xFloorIni, xFloorEnd, yWallEnd, yCellEnd);
+                                this.WriteUpperWall(upperWall, xFloorIni, xFloorEnd, yWallEnd);
+                                if (y == this.gridMap.yAmmount - 1)
+                                    this.WriteBottomWall(this.gridMap.roofMaterial, xCellIni, xCellEnd, yCellEnd);
+                                if ((x == 0) &&
+                                    (leftWall == null))
+                                    this.WriteRightWall(this.gridMap.roofMaterial, xCellIni, yWallEnd, yCellEnd);
+                                if ((x == this.gridMap.xAmmount - 1) &&
+                                    (rightWall == null))
+                                    this.WriteLeftWall(this.gridMap.roofMaterial, xCellEnd, yWallEnd, yCellEnd);
                             }
-
-                            GridMaterialBehavior leftIniWall = null;
-                            GridMaterialBehavior leftEndWall = null;
-                            GridMaterialBehavior rightIniWall = null;
-                            GridMaterialBehavior rightEndWall = null;
-                            GridMaterialBehavior backIniWall = null;
-                            GridMaterialBehavior backEndWall = null;
-                            GridMaterialBehavior forwardIniWall = null;
-                            GridMaterialBehavior forwardEndWall = null;
-
-                            if (leftWall == null)
-                            {
-                                if (y > 0)
-                                {
-                                    leftIniWall = this.gridMap.LeftWall(x, y - 1);
-                                    if (leftIniWall != null)
-                                    {
-                                        if ((x > 0) &&
-                                            (x < this.gridMap.xAmmount - 1))
-                                        {
-                                            this.WriteLeftWall(leftIniWall,
-                                                xWallIni,
-                                                yCellIni,
-                                                yWallIni);
-
-                                            this.WriteRoof(xCellIni,
-                                                xWallIni,
-                                                yCellIni,
-                                                yWallIni);
-                                        }
-                                        else
-                                        {
-                                            this.WriteRightWall(leftIniWall,
-                                                xCellIni,
-                                                yCellIni,
-                                                yWallIni);
-                                        }
-                                    }
-                                }
-
-                                if (y < this.gridMap.yAmmount - 1)
-                                {
-                                    leftEndWall = this.gridMap.LeftWall(x, y + 1);
-                                    if (leftEndWall != null)
-                                    {
-                                        if ((x > 0) &&
-                                            (x < this.gridMap.xAmmount - 1))
-                                        {
-                                            this.WriteLeftWall(leftEndWall,
-                                                xWallIni,
-                                                yWallEnd,
-                                                yCellEnd);
-
-                                            this.WriteRoof(xCellIni,
-                                                xWallIni,
-                                                yWallEnd,
-                                                yCellEnd);
-                                        }
-                                        else
-                                        {
-                                            this.WriteRightWall(leftEndWall,
-                                                xCellIni,
-                                                yWallEnd,
-                                                yCellEnd);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                                this.WriteLeftWall(leftWall, xFloorIni, yFloorIni, yFloorEnd);
-
-                            if (rightWall == null)
-                            {
-
-                                if (y > 0)
-                                {
-                                    rightIniWall = this.gridMap.RightWall(x, y - 1);
-
-                                    if (rightIniWall != null)
-                                    {
-                                        if ((x > 0) &&
-                                            (x < this.gridMap.xAmmount - 1))
-                                        {
-                                            this.WriteRightWall(rightIniWall,
-                                                xWallEnd,
-                                                yCellIni,
-                                                yWallIni);
-
-                                            this.WriteRoof(xWallEnd,
-                                                xCellEnd,
-                                                yCellIni,
-                                                yWallIni);
-                                        }
-                                        else
-                                        {
-                                            this.WriteLeftWall(rightIniWall,
-                                                xCellEnd,
-                                                yCellIni,
-                                                yWallIni);
-                                        }
-                                    }
-                                }
-
-                                if (y < this.gridMap.yAmmount - 1)
-                                {
-                                    rightEndWall = this.gridMap.RightWall(x, y + 1);
-
-                                    if (rightEndWall != null)
-                                    {
-                                        if ((x > 0) &&
-                                            (x < this.gridMap.xAmmount - 1))
-                                        {
-                                            this.WriteRightWall(rightEndWall,
-                                                xWallEnd,
-                                                yWallEnd,
-                                                yCellEnd);
-
-                                            this.WriteRoof(xWallEnd,
-                                                xCellEnd,
-                                                yWallEnd,
-                                                yCellEnd);
-                                        }
-                                        else
-                                        {
-                                            this.WriteLeftWall(rightEndWall,
-                                                xCellEnd,
-                                                yWallEnd,
-                                                yCellEnd);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                                this.WriteRightWall(rightWall, xFloorEnd, yFloorIni, yFloorEnd);
-
-                            if (bottomWall == null)
-                            {
-                                if (x > 0)
-                                {
-                                    backIniWall = this.gridMap.BottomWall(x - 1, y);
-
-                                    if (backIniWall != null)
-                                    {
-                                        if ((y > 0) &&
-                                            (y < this.gridMap.yAmmount - 1))
-                                        {
-                                            this.WriteBackWall(backIniWall,
-                                                xCellIni,
-                                                xWallIni,
-                                                yWallIni);
-
-                                            if (leftIniWall == null)
-                                                this.WriteRoof(xCellIni,
-                                                    xWallIni,
-                                                    yCellIni,
-                                                    yWallIni);
-                                        }
-                                        else
-                                        {
-                                            this.WriteForwardWall(backIniWall,
-                                                xCellIni,
-                                                xWallIni,
-                                                yCellIni);
-                                        }
-                                    }
-                                }
-
-                                if (x < this.gridMap.xAmmount - 1)
-                                {
-                                    backEndWall = this.gridMap.BottomWall(x + 1, y);
-
-                                    if (backEndWall != null)
-                                    {
-                                        if ((y > 0) &&
-                                            (y < this.gridMap.yAmmount - 1))
-                                        {
-                                            this.WriteBackWall(backEndWall,
-                                                xWallEnd,
-                                                xCellEnd,
-                                                yWallIni);
-
-                                            if (rightIniWall == null)
-                                                this.WriteRoof(xWallEnd,
-                                                    xCellEnd,
-                                                    yCellIni,
-                                                    yWallIni);
-                                        }
-                                        else
-                                        {
-                                            this.WriteForwardWall(backEndWall,
-                                                xWallEnd,
-                                                xCellEnd,
-                                                yCellIni);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                                this.WriteBackWall(bottomWall, xFloorIni, xFloorEnd, yFloorIni);
-
-                            if (upperWall == null)
-                            {
-                                if (x > 0)
-                                {
-                                    forwardIniWall = this.gridMap.UpperWall(x - 1, y);
-
-                                    if (forwardIniWall != null)
-                                    {
-                                        if ((y > 0) &&
-                                            (y < this.gridMap.yAmmount - 1))
-                                        {
-                                            this.WriteForwardWall(forwardIniWall,
-                                                xCellIni,
-                                                xWallIni,
-                                                yWallEnd);
-
-                                            if (leftEndWall == null)
-                                                this.WriteRoof(xCellIni,
-                                                    xWallIni,
-                                                    yWallEnd,
-                                                    yCellEnd);
-                                        }
-                                        else
-                                        {
-                                            this.WriteBackWall(forwardIniWall,
-                                                xCellIni,
-                                                xWallIni,
-                                                yCellEnd);
-                                        }
-                                    }
-                                }
-
-                                if (x < this.gridMap.xAmmount - 1)
-                                {
-                                    forwardEndWall = this.gridMap.UpperWall(x + 1, y);
-
-                                    if (forwardEndWall != null)
-                                    {
-                                        if ((y > 0) &&
-                                            (y < this.gridMap.yAmmount - 1))
-                                        {
-                                            this.WriteForwardWall(forwardEndWall,
-                                                xWallEnd,
-                                                xCellEnd,
-                                                yWallEnd);
-
-                                            if (rightEndWall == null)
-                                                this.WriteRoof(xWallEnd,
-                                                    xCellEnd,
-                                                    yWallEnd,
-                                                    yCellEnd);
-                                        }
-                                        else
-                                        {
-                                            this.WriteBackWall(forwardEndWall,
-                                                xWallEnd,
-                                                xCellEnd,
-                                                yCellEnd);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                                this.WriteForwardWall(upperWall, xFloorIni, xFloorEnd, yFloorEnd);
 
                             this.WriteFloor(floor,
                                 xFloorIni,
                                 xFloorEnd,
                                 yFloorIni,
-                                yFloorEnd);
+                                yFloorEnd);                            
+                                                       
+                            if ((rightEndWall != null) ||
+                                (upperEndWall != null))
+                            {
+                                this.WriteRoof(xWallEnd, xCellEnd, yWallEnd, yCellEnd);
+
+                                if (rightEndWall != null)
+                                    this.WriteRightWall(rightEndWall, xWallEnd, yWallEnd, yCellEnd);
+                                else
+                                    this.WriteRightWall(upperEndWall, xWallEnd, yWallEnd, yCellEnd);
+                                if (x == this.gridMap.xAmmount - 1)
+                                    this.WriteLeftWall(gridMap.roofMaterial, xCellEnd, yWallEnd, yCellEnd);
+
+                                if (upperEndWall != null)
+                                    this.WriteUpperWall(upperEndWall, xWallEnd, xCellEnd, yWallEnd);
+                                else
+                                    this.WriteUpperWall(rightEndWall, xWallEnd, xCellEnd, yWallEnd);
+                                if (y == this.gridMap.yAmmount - 1)
+                                    this.WriteBottomWall(gridMap.roofMaterial, xWallEnd, xCellEnd, yCellEnd);
+                            }
+
+                            if ((leftEndWall != null) ||
+                                (upperIniWall != null))
+                            {
+                                this.WriteRoof(xCellIni, xWallIni, yWallEnd, yCellEnd);
+
+                                if (leftEndWall != null)
+                                    this.WriteLeftWall(leftEndWall, xWallIni, yWallEnd, yCellEnd);
+                                else
+                                    this.WriteLeftWall(upperIniWall, xWallIni, yWallEnd, yCellEnd);
+                                if (x == 0)
+                                    this.WriteRightWall(gridMap.roofMaterial, xCellIni, yWallEnd, yCellEnd);
+
+                                if (upperIniWall != null)
+                                    this.WriteUpperWall(upperIniWall, xCellIni, xWallIni, yWallEnd);
+                                else
+                                    this.WriteUpperWall(leftEndWall, xCellIni, xWallIni, yWallEnd);
+                                if (y == this.gridMap.yAmmount - 1)
+                                    this.WriteBottomWall(gridMap.roofMaterial, xCellIni, xWallIni, yCellEnd);
+                            }
+
+                            if ((rightIniWall != null) ||
+                                (bottomEndWall != null))
+                            {
+                                this.WriteRoof(xWallEnd, xCellEnd, yCellIni, yWallIni);
+
+                                if (rightIniWall != null)
+                                    this.WriteRightWall(rightIniWall, xWallEnd, yCellIni, yWallIni);
+                                else
+                                    this.WriteRightWall(bottomEndWall, xWallEnd, yCellIni, yWallIni);
+                                if (x == this.gridMap.xAmmount - 1)
+                                    this.WriteLeftWall(gridMap.roofMaterial, xCellEnd, yCellIni, yWallIni);
+
+                                if (bottomEndWall != null)
+                                    this.WriteBottomWall(bottomEndWall, xWallEnd, xCellEnd, yWallIni);
+                                else
+                                    this.WriteBottomWall(rightIniWall, xWallEnd, xCellEnd, yWallIni);
+                                if (y == 0)
+                                    this.WriteUpperWall(gridMap.roofMaterial, xWallEnd, xCellEnd, yCellIni);
+                            }
+
+                            if ((leftIniWall != null) ||
+                                (bottomIniWall != null))
+                            {
+                                this.WriteRoof(xCellIni, xWallIni, yCellIni, yWallIni);
+
+                                if (leftIniWall != null)
+                                    this.WriteLeftWall(leftIniWall, xWallIni, yCellIni, yWallIni);
+                                else
+                                    this.WriteLeftWall(bottomIniWall, xWallIni, yCellIni, yWallIni);
+                                if (x == 0)
+                                    this.WriteRightWall(gridMap.roofMaterial, xCellIni, yCellIni, yWallIni);
+
+                                if (bottomIniWall != null)
+                                    this.WriteBottomWall(bottomIniWall, xCellIni, xWallIni, yWallIni);
+                                else
+                                    this.WriteBottomWall(leftIniWall, xCellIni, xWallIni, yWallIni);
+                                if (y == 0)
+                                    this.WriteUpperWall(gridMap.roofMaterial, xCellIni, xWallIni, yCellIni);
+                            }
+
+
+
+
+                            //if (leftWall == null)
+                            //{
+                            //    if (y > 0)
+                            //    {
+                            //        leftIniWall = this.gridMap.LeftWall(x, y - 1);
+                            //        if (leftIniWall != null)
+                            //        {
+                            //            if (x > 0)
+                            //            {
+                            //                this.WriteLeftWall(leftIniWall,
+                            //                    xWallIni,
+                            //                    yCellIni,
+                            //                    yWallIni);
+
+                            //                this.WriteRoof(xCellIni,
+                            //                    xWallIni,
+                            //                    yCellIni,
+                            //                    yWallIni);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteRightWall(leftIniWall,
+                            //                    xCellIni,
+                            //                    yCellIni,
+                            //                    yWallIni);
+                            //            }
+                            //        }
+                            //    }
+
+                            //    if (y < this.gridMap.yAmmount - 1)
+                            //    {
+                            //        leftEndWall = this.gridMap.LeftWall(x, y + 1);
+                            //        if (leftEndWall != null)
+                            //        {
+                            //            if ((x > 0) &&
+                            //                (x < this.gridMap.xAmmount - 1))
+                            //            {
+                            //                this.WriteLeftWall(leftEndWall,
+                            //                    xWallIni,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+
+                            //                this.WriteRoof(xCellIni,
+                            //                    xWallIni,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteRightWall(leftEndWall,
+                            //                    xCellIni,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //    this.WriteLeftWall(leftWall, xFloorIni, yFloorIni, yFloorEnd);
+
+                            //if (rightWall == null)
+                            //{
+                            //    if (y > 0)
+                            //    {
+                            //        rightIniWall = this.gridMap.RightWall(x, y - 1);
+
+                            //        if (rightIniWall != null)
+                            //        {
+                            //            if (x > 0)
+                            //            {
+                            //                this.WriteRightWall(rightIniWall,
+                            //                    xWallEnd,
+                            //                    yCellIni,
+                            //                    yWallIni);
+
+                            //                this.WriteRoof(xWallEnd,
+                            //                    xCellEnd,
+                            //                    yCellIni,
+                            //                    yWallIni);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteLeftWall(rightIniWall,
+                            //                    xCellEnd,
+                            //                    yCellIni,
+                            //                    yWallIni);
+                            //            }
+                            //        }
+                            //    }
+
+                            //    if (y < this.gridMap.yAmmount - 1)
+                            //    {
+                            //        rightEndWall = this.gridMap.RightWall(x, y + 1);
+
+                            //        if (rightEndWall != null)
+                            //        {
+                            //            if ((x > 0) &&
+                            //                (x < this.gridMap.xAmmount - 1))
+                            //            {
+                            //                this.WriteRightWall(rightEndWall,
+                            //                    xWallEnd,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+
+                            //                this.WriteRoof(xWallEnd,
+                            //                    xCellEnd,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteLeftWall(rightEndWall,
+                            //                    xCellEnd,
+                            //                    yWallEnd,
+                            //                    yCellEnd);
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //    this.WriteRightWall(rightWall, xFloorEnd, yFloorIni, yFloorEnd);
+
+                            //if (bottomWall == null)
+                            //{
+                            //    if (x > 0)
+                            //    {
+                            //        bottomIniWall = this.gridMap.BottomWall(x - 1, y);
+
+                            //        if (bottomIniWall != null)
+                            //        {
+                            //            if ((y > 0) &&
+                            //                (y < this.gridMap.yAmmount - 1))
+                            //            {
+                            //                this.WriteBackWall(bottomIniWall,
+                            //                    xCellIni,
+                            //                    xWallIni,
+                            //                    yWallIni);
+
+                            //                if (leftIniWall == null)
+                            //                    this.WriteRoof(xCellIni,
+                            //                        xWallIni,
+                            //                        yCellIni,
+                            //                        yWallIni);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteForwardWall(bottomIniWall,
+                            //                    xCellIni,
+                            //                    xWallIni,
+                            //                    yCellIni);
+                            //            }
+                            //        }
+                            //    }
+
+                            //    if (x < this.gridMap.xAmmount - 1)
+                            //    {
+                            //        bottomEndWall = this.gridMap.BottomWall(x + 1, y);
+
+                            //        if (bottomEndWall != null)
+                            //        {
+                            //            if ((y > 0) &&
+                            //                (y < this.gridMap.yAmmount - 1))
+                            //            {
+                            //                this.WriteBackWall(bottomEndWall,
+                            //                    xWallEnd,
+                            //                    xCellEnd,
+                            //                    yWallIni);
+
+                            //                if (rightIniWall == null)
+                            //                    this.WriteRoof(xWallEnd,
+                            //                        xCellEnd,
+                            //                        yCellIni,
+                            //                        yWallIni);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteForwardWall(bottomEndWall,
+                            //                    xWallEnd,
+                            //                    xCellEnd,
+                            //                    yCellIni);
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //    this.WriteBackWall(bottomWall, xFloorIni, xFloorEnd, yFloorIni);
+
+                            //if (upperWall == null)
+                            //{
+                            //    if (x > 0)
+                            //    {
+                            //        upperIniWall = this.gridMap.UpperWall(x - 1, y);
+
+                            //        if (upperIniWall != null)
+                            //        {
+                            //            if ((y > 0) &&
+                            //                (y < this.gridMap.yAmmount - 1))
+                            //            {
+                            //                this.WriteForwardWall(upperIniWall,
+                            //                    xCellIni,
+                            //                    xWallIni,
+                            //                    yWallEnd);
+
+                            //                if (leftEndWall == null)
+                            //                    this.WriteRoof(xCellIni,
+                            //                        xWallIni,
+                            //                        yWallEnd,
+                            //                        yCellEnd);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteBackWall(upperIniWall,
+                            //                    xCellIni,
+                            //                    xWallIni,
+                            //                    yCellEnd);
+                            //            }
+                            //        }
+                            //    }
+
+                            //    if (x < this.gridMap.xAmmount - 1)
+                            //    {
+                            //        upperEndWall = this.gridMap.UpperWall(x + 1, y);
+
+                            //        if (upperEndWall != null)
+                            //        {
+                            //            if ((y > 0) &&
+                            //                (y < this.gridMap.yAmmount - 1))
+                            //            {
+                            //                this.WriteForwardWall(upperEndWall,
+                            //                    xWallEnd,
+                            //                    xCellEnd,
+                            //                    yWallEnd);
+
+                            //                if (rightEndWall == null)
+                            //                    this.WriteRoof(xWallEnd,
+                            //                        xCellEnd,
+                            //                        yWallEnd,
+                            //                        yCellEnd);
+                            //            }
+                            //            else
+                            //            {
+                            //                this.WriteBackWall(upperEndWall,
+                            //                    xWallEnd,
+                            //                    xCellEnd,
+                            //                    yCellEnd);
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //    this.WriteForwardWall(upperWall, xFloorIni, xFloorEnd, yFloorEnd);                            
                         }
                     }
                 }
@@ -581,7 +754,7 @@ namespace Assets
                 uvs.Add(new Vector2(xUVEnd, 1f));
             }
 
-            void WriteBackWall(GridMaterialBehavior wall, float xVertIni, float xVertEnd, float yVert)
+            void WriteBottomWall(GridMaterialBehavior wall, float xVertIni, float xVertEnd, float yVert)
             {
                 int index = this.vertices.Count;
 
@@ -622,7 +795,7 @@ namespace Assets
                 uvs.Add(new Vector2(xUVEnd, 1f));
             }
 
-            void WriteForwardWall(GridMaterialBehavior wall, float xVertIni, float xVertEnd, float yVert)
+            void WriteUpperWall(GridMaterialBehavior wall, float xVertIni, float xVertEnd, float yVert)
             {
                 int index = this.vertices.Count;
 
