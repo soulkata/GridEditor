@@ -1,0 +1,3 @@
+[submodule "CodeUI"]
+	path = Soulkata.CodeUI
+	url = https://github.com/soulkata/CodeUI

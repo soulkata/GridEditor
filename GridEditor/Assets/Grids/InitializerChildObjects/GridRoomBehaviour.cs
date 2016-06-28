@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Assets.Grids
+namespace Assets.Grids.InitializerChildObjects
 {
-    public class GridFloorBehaviour : MonoBehaviour
+    public class GridRoomBehaviour : MonoBehaviour
     {
         public GridMaterialBehavior floorMaterial;
         public int xStart;
